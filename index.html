@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Plant Recognition Quiz Trainer</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <div>
+            <input id="file-input" type="file" accept=".pdf" multiple/>
+            <button id="file-button" type="button">Start!</button>
+        </div>
+        <canvas id="pdf-canvas"></canvas>
+        <div>
+            <button id="page-deny">I don't know</button>
+            <button id="page-display">Show text</button>
+            <button id="page-accept">I know</button>
+        </div>
+        <script src="/jquery-3.7.1.js"></script>
+        <script type="module" src="/pdfjs/pdf.mjs"></script>
+        <script type="module" src="/pdf-lib.mjs"></script>
+        <script type="module" src="/script.js"></script>
+    </body>
+</html>
