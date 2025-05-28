@@ -5,7 +5,7 @@ const { PDFDocument } = PDFLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.mjs";
 
 let fileInput, fileButton, pageDeny, pageDisplay, pageAccept;
-let url, pageStates, pagesRemaining, pageIndex, pageRef, viewport, canvas, context;
+let pageStates, pagesRemaining, pdfDoc, pageIndex, pageRef, viewport, canvas, context;
 
 const original = {};
 
@@ -36,10 +36,13 @@ $(document).ready(function() {
 $(document).on("keydown", function(e) {
     if (e.keyCode === 37 || e.keyCode === 49) {
         denyPage();
+        e.preventDefault();
     } else if (e.keyCode === 32 || e.keyCode === 40) {
         showText();
+        e.preventDefault();
     } else if (e.keyCode === 39 || e.keyCode === 50) {
         acceptPage();
+        e.preventDefault();
     }
 });
 
@@ -74,12 +77,15 @@ async function loadInput() {
     const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
     const blobUrl = URL.createObjectURL(blob);
 
-    url = blobUrl; // Store the blob URL for later use
     pageStates = new Array(mergedPdf.getPageCount()).fill(false);
 
     pagesRemaining = pageStates.length;
 
-    checkRemainingPages();
+    pdfjsLib.getDocument(blobUrl).promise.then(pdf => {
+        pdfDoc = pdf;
+
+        checkRemainingPages();
+    }).catch(console.error);
 }
 
 function checkRemainingPages() {
@@ -102,9 +108,7 @@ function generateRandomIndex() {
 }
 
 function displayPage() {
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-        return pdf.getPage(pageIndex + 1);
-    }).then(page => {
+    pdfDoc.getPage(pageIndex + 1).then(page => {
         pageRef = page;
 
         const scale = 1.5;
