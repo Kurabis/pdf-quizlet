@@ -5,7 +5,7 @@ const { PDFDocument } = PDFLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.mjs";
 
 let fileInput, fileButton, pageDeny, pageDisplay, pageAccept;
-let pageStates, pagesRemaining, pdfDoc, pageIndex, pageRef, viewport, canvas, context;
+let pageStates, pagesRemaining, pdfDoc, pageIndex = 0, pageRef, viewport, canvas, context;
 
 const original = {};
 
@@ -98,13 +98,23 @@ function checkRemainingPages() {
 }
 
 function generateRandomIndex() {
-    do {
-        let previousIndex = pageIndex;
+    /*let previousIndex = pageIndex;
 
+    do {
         pageIndex = Math.floor(Math.random() * pageStates.length);
 
         if (pageIndex === previousIndex) continue;
-    } while (pageStates[pageIndex] === true);
+    } while (pageStates[pageIndex] === true);*/
+
+    do {
+        if (pageIndex < pageStates.length - 1) {
+            pageIndex++;
+        } else {
+            pageIndex = 0; // Reset to start if at the end
+        }
+    } while (pageStates[pageIndex] == true);
+
+    console.log(pageIndex);
 }
 
 function displayPage() {
