@@ -5,7 +5,7 @@ const { PDFDocument } = PDFLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.mjs";
 
 let fileInput, fileButton, pageDeny, pageDisplay, pageAccept;
-let pageStates, pagesRemaining, pdfDoc, pageIndex = 0, pageRef, viewport, canvas, context, revealed;
+let pageStates, pagesRemaining, pdfDoc, pageIndex, pageRef, viewport, canvas, context, revealed;
 
 const original = {};
 
@@ -82,6 +82,8 @@ async function loadInput() {
     pageStates = new Array(mergedPdf.getPageCount()).fill(false);
 
     pagesRemaining = pageStates.length;
+
+    pageIndex = 0; 
 
     pdfjsLib.getDocument(blobUrl).promise.then(pdf => {
         pdfDoc = pdf;
