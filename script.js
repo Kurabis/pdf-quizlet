@@ -5,7 +5,7 @@ const { PDFDocument } = PDFLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.mjs";
 
 let fileInput, fileButton, pageDeny, pageDisplay, pageAccept;
-let pageStates, pagesRemaining, pdfDoc, pageIndex = 0, pageRef, viewport, canvas, context;
+let pageStates, pagesRemaining, pdfDoc, pageIndex = 0, pageRef, viewport, canvas, context, revealed;
 
 const original = {};
 
@@ -38,6 +38,8 @@ $(document).on("keydown", function(e) {
         denyPage();
         e.preventDefault();
     } else if (e.keyCode === 32 || e.keyCode === 40) {
+        revealed = true;
+
         showText();
         e.preventDefault();
     } else if (e.keyCode === 39 || e.keyCode === 50) {
@@ -146,6 +148,8 @@ function displayPage() {
             viewport: viewport
         };
 
+        revealed = false;
+
         page.render(renderContext).promise.then(() => {
             console.log("Page rendered with all text-related visuals suppressed.");
         });
@@ -153,6 +157,7 @@ function displayPage() {
 }
 
 function denyPage() {
+    if (!revealed) showText();
     checkRemainingPages();
 }
 
@@ -165,18 +170,21 @@ function showText() {
     // Optional: clear the canvas before re-rendering
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Re-render with all visuals
-    pageRef.render({
-        canvasContext: context,
-        viewport: viewport
-    }).promise.then(() => {
-        console.log("Re-rendered with text and visuals.");
-    });
+    if (revealed) {
+        // Re-render with all visuals
+        pageRef.render({
+            canvasContext: context,
+            viewport: viewport
+        }).promise.then(() => {
+            console.log("Re-rendered with text and visuals.");
+        });
+    }
 }
 
 function acceptPage() {
     pageStates[pageIndex] = true;
     pagesRemaining--;
 
+    if (!revealed) showText();
     checkRemainingPages();
 }
