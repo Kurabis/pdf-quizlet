@@ -38,8 +38,6 @@ $(document).on("keydown", function(e) {
         denyPage();
         e.preventDefault();
     } else if (e.keyCode === 32 || e.keyCode === 40) {
-        revealed = true;
-
         showText();
         e.preventDefault();
     } else if (e.keyCode === 39 || e.keyCode === 50) {
@@ -165,6 +163,8 @@ function denyPage() {
 
 function showText() {
     if (!pageRef || !context || !viewport) return;
+
+    revealed = true;
 
     // Restore original canvas methods
     Object.assign(context, original);
