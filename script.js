@@ -4,8 +4,8 @@ const { PDFDocument } = PDFLib;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.mjs";
 
-let fileInput, fileButton, pageDeny, pageDisplay, pageAccept;
-let pageStates, pagesRemaining, pdfDoc, pageIndex, pageRef, viewport, canvas, context, revealed;
+let fileInput, fileButton, pageDeny, pageDisplay, pageAccept, score, percentageScore;
+let pageStates, pagesRemaining, pdfDoc, pageIndex, pageRef, viewport, canvas, context, revealed, successfulGuesses, totalGuesses;
 
 const original = {};
 
@@ -15,6 +15,8 @@ $(document).ready(function() {
     pageDeny = $("#page-deny");
     pageDisplay = $("#page-display");
     pageAccept = $("#page-accept");
+    score = $("#score")
+    percentageScore = $("#percentage-score")
 
     fileButton.on("click", function() {
         loadInput();
@@ -88,6 +90,9 @@ async function loadInput() {
 
         checkRemainingPages();
     }).catch(console.error);
+
+    successfulGuesses = 0
+    totalGuesses = 0
 }
 
 function checkRemainingPages() {
@@ -154,9 +159,14 @@ function displayPage() {
             console.log("Page rendered with all text-related visuals suppressed.");
         });
     }).catch(console.error);
+
+    score.text(`Score: ${successfulGuesses} / ${totalGuesses}`);
+    percentageScore.text(`Percentage: ${totalGuesses > 0 ? ((successfulGuesses / totalGuesses) * 100).toFixed(2) : "0.00"}%`);
 }
 
 function denyPage() {
+    totalGuesses++;
+
     if (!revealed) showText();
     checkRemainingPages();
 }
@@ -186,6 +196,9 @@ function showText() {
 function acceptPage() {
     pageStates[pageIndex] = true;
     pagesRemaining--;
+
+    successfulGuesses++;
+    totalGuesses++;
 
     if (!revealed) showText();
     checkRemainingPages();
